@@ -6,6 +6,7 @@ on:
       app_url:
         description: "Website address (must start with https://)"
         required: false
+        default: "https://prottashaacademy.com"
   push:
     branches: [main]
 
@@ -13,7 +14,7 @@ jobs:
   apk:
     runs-on: ubuntu-latest
     env:
-      APP_URL: ${{ github.event.inputs.app_url || vars.APP_URL }}
+      APP_URL: ${{ github.event.inputs.app_url || vars.APP_URL || 'https://prottashaacademy.com' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -52,7 +53,9 @@ jobs:
         run: npm ci
 
       - name: Set your website address
-        run: node scripts/set-url.js
+        run: |
+          echo "Website address: $APP_URL"
+          node scripts/set-url.js
 
       - name: Sync Capacitor
         run: npx cap sync android
