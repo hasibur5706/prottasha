@@ -38,9 +38,13 @@ jobs:
           distribution: temurin
           java-version: 21
 
-            - name: Install Android SDK platform
+      # GitHub's ubuntu-latest already includes the Android SDK, so we only add what we need
+      - name: Install Android SDK platform
         run: |
-          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKM="$(command -v sdkmanager || true)"
+          if [ -z "$SDKM" ]; then SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"; fi
+          echo "Using $SDKM"
           yes | "$SDKM" --licenses > /dev/null || true
           "$SDKM" "platforms;android-36" "build-tools;36.0.0"
 
